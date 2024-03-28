@@ -17,7 +17,11 @@ ENTITY IO_DECODER IS
     TIMER_EN      : OUT STD_LOGIC;
     HEX0_EN       : OUT STD_LOGIC;
     HEX1_EN       : OUT STD_LOGIC;
-	 HSPG_EN			: OUT STD_LOGIC
+	 HSPG_SEL_EN : OUT STD_LOGIC;
+	 HSPG_POS_EN : OUT STD_LOGIC;
+	 HSPG_MIN_EN : OUT STD_LOGIC;
+	 HSPG_MAX_EN : OUT STD_LOGIC;
+	 HSPG_SPD_EN : OUT STD_LOGIC
   );
 
 END ENTITY;
@@ -35,6 +39,11 @@ begin
   TIMER_EN     <= '1' WHEN (ADDR_INT = 16#002#) and (IO_CYCLE = '1') ELSE '0';
   HEX0_EN      <= '1' WHEN (ADDR_INT = 16#004#) and (IO_CYCLE = '1') ELSE '0';
   HEX1_EN      <= '1' WHEN (ADDR_INT = 16#005#) and (IO_CYCLE = '1') ELSE '0';
-  HSPG_EN		<= '1' WHEN (ADDR_INT = 16#050#) and (IO_CYCLE = '1') ELSE '0';
-      
+  
+  HSPG_SEL_EN		<= '1' WHEN (ADDR_INT = 16#050#) and (IO_CYCLE = '1') ELSE '0';
+  HSPG_POS_EN		<= '1' WHEN (ADDR_INT = 16#051#) and (IO_CYCLE = '1') ELSE '0';
+  HSPG_MIN_EN		<= '1' WHEN (ADDR_INT = 16#052#) and (IO_CYCLE = '1') ELSE '0';
+  HSPG_MAX_EN		<= '1' WHEN (ADDR_INT = 16#053#) and (IO_CYCLE = '1') ELSE '0';
+  HSPG_SPD_EN		<= '1' WHEN (ADDR_INT = 16#054#) and (IO_CYCLE = '1') ELSE '0';
+  
 END a;
