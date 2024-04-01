@@ -1262,11 +1262,6 @@ https://fpgasoftware.intel.com/eula.
 	(bus)
 )
 (connector
-	(text "clock_10kHz" (rect 346 1024 406 1041)(font "Intel Clear" ))
-	(pt 464 1040)
-	(pt 336 1040)
-)
-(connector
 	(text "resetn" (rect 346 1040 375 1057)(font "Intel Clear" ))
 	(pt 464 1056)
 	(pt 336 1056)
@@ -1350,6 +1345,11 @@ https://fpgasoftware.intel.com/eula.
 	(pt 680 928)
 	(pt 848 928)
 )
+(connector
+	(text "clk_12MHz" (rect 346 1024 399 1041)(font "Intel Clear" ))
+	(pt 464 1040)
+	(pt 336 1040)
+)
 (junction (pt 536 280))
 (text "This is where your new peripheral should go.  Needed signals have been inserted already to save you time." (rect 272 848 899 867)(font "Intel Clear" (font_size 8)))
 (text "The output goes through an inverter buffer on the daughterboard," (rect 1152 984 1537 1003)(font "Intel Clear" (font_size 8)))
@@ -1359,7 +1359,7 @@ https://fpgasoftware.intel.com/eula.
 (title_block
 	(rect 1112 1264 1480 1384)
 	(section (rect 0 24 368 48)(text "COMPANY" (rect 2 0 57 12)(font "Arial" ))(text "GaTech DDL" (rect 56 2 170 20)(font "Arial" (font_size 12)))(border))
-	(section (rect 0 96 240 120)(text "DATE" (rect 2 0 30 12)(font "Arial" ))(text "Mon Apr 01 13:00:08 2024" (rect 56 3 236 19)(font "Arial" (font_size 10)))(date)(border))
+	(section (rect 0 96 240 120)(text "DATE" (rect 2 0 30 12)(font "Arial" ))(text "Mon Apr 01 15:15:14 2024" (rect 56 3 236 19)(font "Arial" (font_size 10)))(date)(border))
 	(section (rect 0 48 368 72)(text "DESIGNER" (rect 2 0 59 12)(font "Arial" ))(text "Kevin Johnson, Tom Collins" (rect 56 2 286 20)(font "Arial" (font_size 12)))(border))
 	(section (rect 0 72 280 96)(text "NUMBER" (rect 2 0 49 12)(font "Arial" ))(text "1.00" (rect 56 1 85 17)(font "Arial" (font_size 10)))(border))
 	(section (rect 310 96 368 120)(text "OF" (rect 10 0 25 12)(font "Arial" ))(text "1" (rect 34 4 42 20)(font "Arial" (font_size 10))))
