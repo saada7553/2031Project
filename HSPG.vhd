@@ -39,10 +39,10 @@ architecture a of HSPG_SERVO is
 	constant ticks_period : unsigned(15 downto 0) := to_unsigned(240000, 16); -- 20ms
 
 	-- user inputs
-	signal position      : signed(15 downto 0);  -- POS (-100 to 100)?
-	signal min_position  : signed(15 downto 0);  -- MIN (percent 0-100)
-	signal max_position  : signed(15 downto 0);  -- MAX (percent 0-100)
-	signal speed         : std_logic_vector(15 downto 0);  -- SPD (0=SLOW, 1=MEDIUM, 2=FAST, 3=UNCAPPED)
+	signal position      : signed(15 downto 0);   -- POS (default = 0)
+	signal min_position  : signed(15 downto 0);   -- MIN (default = 0)
+	signal max_position  : signed(15 downto 0);   -- MAX (default = 100)
+	signal rot_time      : unsigned(15 downto 0); -- ROT_TIME (default = 0, [ms to track from MIN to MAX])
 	 
 	-- internals
     signal ticks    : unsigned(15 downto 0) := x"0000";  -- internal counter
@@ -53,9 +53,9 @@ begin -- start impl
     process (RESETN, CS_POS, CS_MIN, CS_MAX, CS_SPD) begin
         if RESETN = '0' then
             position <= x"0000"; -- 0
-			min_position <= x"0000";  -- 0%
-            max_position <= x"0064";  -- 100%
-            speed <= x"0000";    -- 0=SLOW
+			min_position <= x"0000";  -- 0
+            max_position <= x"0064";  -- 100
+            rot_time <= x"0000";    -- 0=SLOW
         elsif IO_WRITE = '1' then
 			if rising_edge(CS_POS) then
 				position <= signed(IO_DATA);
@@ -67,7 +67,7 @@ begin -- start impl
 				max_position <= signed(IO_DATA);
 			end if;
 			if rising_edge(CS_SPD) then
-				speed <= IO_DATA;
+				rot_time <= unsigned(IO_DATA);
 			end if;
         end if;
     end process;
