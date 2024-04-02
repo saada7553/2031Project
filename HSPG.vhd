@@ -185,10 +185,10 @@ architecture a of HSPG is
 
 begin -- start impl
 
-	en_0 <= '1' when sel = x"0000" else '0';
-	en_1 <= '1' when sel = x"0001" else '0';
-	en_2 <= '1' when sel = x"0002" else '0';
-	en_3 <= '1' when sel = x"0003" else '0';
+	en_0 <= '1' when (sel = x"0000" or sel = x"FFFF") else '0';
+	en_1 <= '1' when (sel = x"0001" or sel = x"FFFF") else '0';
+	en_2 <= '1' when (sel = x"0002" or sel = x"FFFF") else '0';
+	en_3 <= '1' when (sel = x"0003" or sel = x"FFFF") else '0';
 
 	SERVO_0 : HSPG_SERVO port map(
 		CS_POS and en_0,
