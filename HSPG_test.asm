@@ -1,14 +1,59 @@
-Here:
-	; IN Switches
-	; OUT LEDs
-	; OUT HSPG
-	LOADI 0
-	OUT HSPG_SEL
+Init:
+	; LOADI 1
+	; OUT HSPG_SEL
+	;
+	; LOADI 100
+	; OUT HSPG_MIN_POS
+	;
+	; LOADI 200
+	; OUT HSPG_MAX_POS
+	;
+	; LOADI 1000
+	; OUT HSPG_ROT_TIME
+	; -----
 
-	LOADI 100
+Repeat:
+	IN Switches
+	AND SelMask
+
+	JNEG Sel_1
+	JPOS Sel_1
+	Sel_0:
+		LOADI 0
+		OUT HSPG_MIN_POS
+
+		LOADI 100
+		OUT HSPG_MAX_POS
+
+		LOADI 0
+		OUT HSPG_ROT_TIME
+	JUMP After_Sel
+	Sel_1:
+		LOADI 0
+		OUT HSPG_MIN_POS
+
+		LOADI 15
+		OUT HSPG_MAX_POS
+
+		LOADI 1000
+		OUT HSPG_ROT_TIME
+	After_Sel:
+	; ----
+
+	IN Switches
+	AND PosMask
+
+	OUT LEDs
+
+	OUT HEX0 ; ?
+	OUT HEX1 ; ?
+
 	OUT HSPG_POS
 
-	JUMP Here
+	JUMP Repeat
+; =========================
+SelMask:      DW &B1000000000
+PosMask:      DW &B0111111111
 	
 ; IO address constants
 Switches:  EQU 000
@@ -16,6 +61,7 @@ LEDs:      EQU 001
 Timer:     EQU 002
 Hex0:      EQU 004
 Hex1:      EQU 005
+
 HSPG_SEL:           EQU &H50
 HSPG_POS:           EQU &H51
 HSPG_MIN_POS:       EQU &H52

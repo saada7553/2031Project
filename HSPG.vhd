@@ -28,15 +28,14 @@ entity HSPG_SERVO is
 end HSPG_SERVO;
 
 architecture a of HSPG_SERVO is
-	-- ticks (clock ticks) measured via 12MHz
+	-- ticks (clock ticks) measured via 100kHz
+	constant ticks_absolute_min : unsigned(15 downto 0) := to_unsigned(60, 16); -- 0.6ms
+	constant ticks_absolute_max : unsigned(15 downto 0) := to_unsigned(240, 16); -- 2.4ms
 
-	constant ticks_absolute_min : unsigned(15 downto 0) := to_unsigned(7200, 16); -- 0.6ms
-	constant ticks_absolute_max : unsigned(15 downto 0) := to_unsigned(28800, 16); -- 2.4ms
+	constant ticks_min : unsigned(15 downto 0) := to_unsigned(60, 16); -- 1ms -- TODO: perhaps make configurable - edit, probably don't tbh
+	constant ticks_max : unsigned(15 downto 0) := to_unsigned(240, 16); -- 2ms
 
-	constant ticks_min : unsigned(15 downto 0) := to_unsigned(12000, 16); -- 1ms -- TODO: perhaps make configurable - edit, probably don't tbh
-	constant ticks_max : unsigned(15 downto 0) := to_unsigned(24000, 16); -- 2ms
-
-	constant ticks_period : unsigned(15 downto 0) := to_unsigned(240000, 16); -- 20ms
+	constant ticks_period : unsigned(15 downto 0) := to_unsigned(2000, 16); -- 20ms (TODO: should be 1 lower for reset (since we use ticks = 0 maybe))
 
 	-- user inputs
 	signal position      : signed(15 downto 0);   -- POS (default = 0)
@@ -80,6 +79,7 @@ begin -- start impl
     process (RESETN, CLOCK)
 		variable user_possibilities_raw : signed(15 downto 0);
 		variable user_possibilities : unsigned(15 downto 0);
+		variable user_possibilities_m1 : unsigned(15 downto 0); -- minus 1
 		variable user_position_raw : signed(15 downto 0); -- amount user is above min_position
 		variable user_position : unsigned(15 downto 0); -- amount user is above min_position
 		variable position_ticks_raw : unsigned(31 downto 0);
@@ -88,6 +88,8 @@ begin -- start impl
     begin
         if (RESETN = '0') then
             ticks <= x"0000";
+				current_position_ticks <= ticks_min;
+				spd_ticks_till_move <= x"0000";
         elsif rising_edge(CLOCK) then
 			---------------------- find target_position_ticks
 			user_possibilities_raw := (max_position - min_position) + 1;
@@ -96,10 +98,13 @@ begin -- start impl
 			else
 				user_possibilities := unsigned(user_possibilities_raw);
 			end if;
+			user_possibilities_m1 := user_possibilities - 1;
 			
 			user_position_raw := position - min_position;
 			if user_position_raw < 0 then
 				user_position := x"0000";
+			elsif unsigned(user_position_raw) > user_possibilities_m1 then
+				user_position := unsigned(user_possibilities_m1);
 			else
 				user_position := unsigned(user_position_raw);
 			end if;
@@ -122,6 +127,7 @@ begin -- start impl
 				current_position_ticks <= target_position_ticks;
 				spd_ticks_till_move <= x"0000";
 			else
+				-- TODO: expand to 1.8ms range! (timing will take longer currently, on 0.6-2.4ms scale)
 				-- NOTE: this code assumes we only use functional range 1-2ms!! - do not change this thusforth! (1ms matches ms units -> simple impl)
 				--    math gives that we move 1/rot_time ticks each tick
 				--    we mock this by instead moving on tick every rot_time ticks

@@ -41,22 +41,22 @@ https://fpgasoftware.intel.com/eula.
 	(port
 		(pt 0 64)
 		(input)
-		(text "CS_MIN" (rect 0 0 36 12)(font "Arial" ))
-		(text "CS_MIN" (rect 21 59 57 71)(font "Arial" ))
+		(text "CS_MIN_POS" (rect 0 0 61 12)(font "Arial" ))
+		(text "CS_MIN_POS" (rect 21 59 82 71)(font "Arial" ))
 		(line (pt 0 64)(pt 16 64)(line_width 1))
 	)
 	(port
 		(pt 0 80)
 		(input)
-		(text "CS_MAX" (rect 0 0 41 12)(font "Arial" ))
-		(text "CS_MAX" (rect 21 75 62 87)(font "Arial" ))
+		(text "CS_MAX_POS" (rect 0 0 66 12)(font "Arial" ))
+		(text "CS_MAX_POS" (rect 21 75 87 87)(font "Arial" ))
 		(line (pt 0 80)(pt 16 80)(line_width 1))
 	)
 	(port
 		(pt 0 96)
 		(input)
-		(text "CS_SPD" (rect 0 0 37 12)(font "Arial" ))
-		(text "CS_SPD" (rect 21 91 58 103)(font "Arial" ))
+		(text "CS_ROT_TIME" (rect 0 0 69 12)(font "Arial" ))
+		(text "CS_ROT_TIME" (rect 21 91 90 103)(font "Arial" ))
 		(line (pt 0 96)(pt 16 96)(line_width 1))
 	)
 	(port
