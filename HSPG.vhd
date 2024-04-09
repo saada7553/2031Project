@@ -23,7 +23,8 @@ entity HSPG_SERVO is
         CLOCK       : in  std_logic;
         RESETN      : in  std_logic;
 
-        PULSE       : out std_logic
+        PULSE       : out std_logic;
+		MOTION_DONE : out std_logic
     );
 end HSPG_SERVO;
 
@@ -47,6 +48,7 @@ architecture a of HSPG_SERVO is
     signal ticks                     : unsigned(15 downto 0) := x"0000"; -- internal counter
     signal current_position_ticks    : unsigned(15 downto 0) := x"0000";
     signal spd_ticks_till_move       : unsigned(15 downto 0) := x"0000";
+	signal subticks                  : unsigned(15 downto 0) := x"0000";
 
 begin -- start impl
 
@@ -88,8 +90,10 @@ begin -- start impl
     begin
         if (RESETN = '0') then
             ticks <= x"0000";
-				current_position_ticks <= ticks_min;
-				spd_ticks_till_move <= x"0000";
+			current_position_ticks <= ticks_min;
+			spd_ticks_till_move <= x"0000";
+            subticks <= x"0000";
+			MOTION_DONE <= '0';
         elsif rising_edge(CLOCK) then
 			---------------------- find target_position_ticks
 			user_possibilities_raw := (max_position - min_position) + 1;
@@ -134,10 +138,22 @@ begin -- start impl
 				needed_spd_ticks := rot_time - 1;
 
 				if spd_ticks_till_move = needed_spd_ticks or spd_ticks_till_move > needed_spd_ticks then
-					if target_position_ticks < current_position_ticks then
-						current_position_ticks <= current_position_ticks - 1;
-					else
-						current_position_ticks <= current_position_ticks + 1;
+					subticks <= subticks + 18;
+
+					if subticks >= 20 then
+						if target_position_ticks < current_position_ticks then
+							current_position_ticks <= current_position_ticks - 2;
+						else
+							current_position_ticks <= current_position_ticks + 2;
+						end if;
+						subticks = subticks - 20;
+					elsif subticks >= 10 then
+						if target_position_ticks < current_position_ticks then
+							current_position_ticks <= current_position_ticks - 1;
+						else
+							current_position_ticks <= current_position_ticks + 1;
+						end if;
+						subticks = subticks - 10;
 					end if;
 
 					-- move towards target!
@@ -149,6 +165,12 @@ begin -- start impl
 			end if;
 
 			------------------------------------------------------------------------ 
+			if current_position_ticks = target_position_ticks then
+				MOTION_DONE <= '1';
+			else
+				MOTION_DONE <= '0';
+			end if;
+
 
             -- Each clock cycle, a counter is incremented.
             ticks <= ticks + 1;
@@ -192,7 +214,9 @@ entity HSPG is
         PULSE_0     : out std_logic;
         PULSE_1     : out std_logic;
         PULSE_2     : out std_logic;
-        PULSE_3     : out std_logic
+        PULSE_3     : out std_logic;
+
+		MOTION_DONE : out std_logic_vector(15 downto 0)
     );
 end HSPG;
 
@@ -210,7 +234,8 @@ architecture a of HSPG is
 			CLOCK       : in  std_logic;
 			RESETN      : in  std_logic;
 
-			PULSE       : out std_logic
+			PULSE       : out std_logic;
+			MOTION_DONE : out std_logic
 		);
 	end component HSPG_SERVO;
 
@@ -219,6 +244,7 @@ architecture a of HSPG is
 
 	-- helpers (don't need to be persistent, maybe there is a better way)
 	signal en_0, en_1, en_2, en_3 : std_logic := '0';
+	signal done_0, done_1, done_2, done_3 : std_logic := '0';
 
 begin -- start impl
 
@@ -227,13 +253,22 @@ begin -- start impl
 	en_2 <= '1' when (sel = x"0002" or sel = x"FFFF") else '0';
 	en_3 <= '1' when (sel = x"0003" or sel = x"FFFF") else '0';
 
+	MOTION_DONE <= x"0001" when (
+					(sel = x"FFFF" and (done_0 and done_1 and done_2 and done_3)) or
+					(sel = x"0000" and done_0) or
+					(sel = x"0001" and done_1) or
+					(sel = x"0002" and done_2) or
+					(sel = x"0003" and done_3) or
+    ) else x"0000";
+
 	SERVO_0 : HSPG_SERVO port map(
 		CS_POS and en_0,
 		CS_MIN_POS and en_0,
 		CS_MAX_POS and en_0,
 		CS_ROT_TIME and en_0,
 		IO_WRITE, IO_DATA, CLOCK, RESETN,
-		PULSE_0
+		PULSE_0,
+		done_0
 	);
 
 	SERVO_1 : HSPG_SERVO port map(
@@ -242,7 +277,8 @@ begin -- start impl
 		CS_MAX_POS and en_1,
 		CS_ROT_TIME and en_1,
 		IO_WRITE, IO_DATA, CLOCK, RESETN,
-		PULSE_1
+		PULSE_1,
+		done_1
 	);
 
 	SERVO_2 : HSPG_SERVO port map(
@@ -251,7 +287,8 @@ begin -- start impl
 		CS_MAX_POS and en_2,
 		CS_ROT_TIME and en_2,
 		IO_WRITE, IO_DATA, CLOCK, RESETN,
-		PULSE_2
+		PULSE_2,
+		done_2
 	);
 
 	SERVO_3 : HSPG_SERVO port map(
@@ -260,7 +297,8 @@ begin -- start impl
 		CS_MAX_POS and en_3,
 		CS_ROT_TIME and en_3,
 		IO_WRITE, IO_DATA, CLOCK, RESETN,
-		PULSE_3
+		PULSE_3,
+		done_3
 	);
 
 	-- set sel via IO
