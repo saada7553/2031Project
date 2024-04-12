@@ -6,7 +6,7 @@ DATA_RADIX=HEX;
 
 CONTENT BEGIN
 0000: 9000; -- 	IN Switches
-0001: 4818; -- 	AND SelMask
+0001: 4819; -- 	AND SelMask
 0002: 300B; -- 	JNEG Sel_1
 0003: 380B; -- 	JPOS Sel_1
 0004: B800; -- 		LOADI 0
@@ -23,13 +23,14 @@ CONTENT BEGIN
 000F: BBE8; -- 		LOADI 1000
 0010: 9854; -- 		OUT HSPG_ROT_TIME
 0011: 9000; -- 	IN Switches
-0012: 4819; -- 	AND PosMask
-0013: 9801; -- 	OUT LEDs
-0014: 9804; -- 	OUT HEX0 ; ?
-0015: 9805; -- 	OUT HEX1 ; ?
-0016: 9851; -- 	OUT HSPG_POS
-0017: 2800; -- 	JUMP Repeat
-0018: 0200; -- SelMask:      DW &B1000000000
-0019: 01FF; -- PosMask:      DW &B0111111111
-[001A..07FF] : 0000; -- [empty memory]
+0012: 481A; -- 	AND PosMask
+0013: 9804; -- 	OUT HEX0 ; ?
+0014: 9805; -- 	OUT HEX1 ; ?
+0015: 9851; -- 	OUT HSPG_POS
+0016: 9055; -- 	IN HSPG_DONE
+0017: 9801; -- 	OUT LEDs
+0018: 2800; -- 	JUMP Repeat
+0019: 0200; -- SelMask:      DW &B1000000000
+001A: 01FF; -- PosMask:      DW &B0111111111
+[001B..07FF] : 0000; -- [empty memory]
 END;

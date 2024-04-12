@@ -82,6 +82,7 @@ begin -- start impl
 		variable user_possibilities_raw : signed(15 downto 0);
 		variable user_possibilities : unsigned(15 downto 0);
 		variable user_possibilities_m1 : unsigned(15 downto 0); -- minus 1
+		variable user_possibilities_div : unsigned(15 downto 0); -- =m1, unless 0, then 1 (eg range [1, ...])
 		variable user_position_raw : signed(15 downto 0); -- amount user is above min_position
 		variable user_position : unsigned(15 downto 0); -- amount user is above min_position
 		variable position_ticks_raw : unsigned(31 downto 0);
@@ -113,8 +114,15 @@ begin -- start impl
 				user_position := unsigned(user_position_raw);
 			end if;
 
+			-- we do this to avoid divide by zero when [MIN = MAX]
+			if user_possibilities_m1 = 0 then
+				user_possibilities_div := x"0001";
+			else
+				user_possibilities_div := user_possibilities_m1;
+			end if;
+
 			-- TODO: configurable ticks_min/ticks_max?
-			position_ticks_raw := ((user_position * (ticks_max - ticks_min)) / (user_possibilities)) + ticks_min;
+			position_ticks_raw := ((user_position * (ticks_max - ticks_min)) / (user_possibilities_div)) + ticks_min;
 
 			-- bound check just in case! (hopefully this isn't even possible/necessary)
 			if position_ticks_raw < ticks_absolute_min then
@@ -131,7 +139,7 @@ begin -- start impl
 				current_position_ticks <= target_position_ticks;
 				spd_ticks_till_move <= x"0000";
 			else
-				-- TODO: expand to 1.8ms range! (timing will take longer currently, on 0.6-2.4ms scale)
+				-- (done?) TODO: expand to 1.8ms range! (timing will take longer currently, on 0.6-2.4ms scale)
 				-- NOTE: this code assumes we only use functional range 1-2ms!! - do not change this thusforth! (1ms matches ms units -> simple impl)
 				--    math gives that we move 1/rot_time ticks each tick
 				--    we mock this by instead moving on tick every rot_time ticks
@@ -142,18 +150,26 @@ begin -- start impl
 
 					if subticks >= 20 then
 						if target_position_ticks < current_position_ticks then
-							current_position_ticks <= current_position_ticks - 2;
+							if (current_position_ticks - 1) = target_position_ticks then
+								current_position_ticks <= target_position_ticks;
+							else
+								current_position_ticks <= current_position_ticks - 2;
+							end if;
 						else
-							current_position_ticks <= current_position_ticks + 2;
+							if (current_position_ticks + 1) = target_position_ticks then
+								current_position_ticks <= target_position_ticks;
+							else
+								current_position_ticks <= current_position_ticks + 2;
+							end if;
 						end if;
-						subticks = subticks - 20;
+						subticks <= subticks - 20;
 					elsif subticks >= 10 then
 						if target_position_ticks < current_position_ticks then
 							current_position_ticks <= current_position_ticks - 1;
 						else
 							current_position_ticks <= current_position_ticks + 1;
 						end if;
-						subticks = subticks - 10;
+						subticks <= subticks - 10;
 					end if;
 
 					-- move towards target!
@@ -181,6 +197,7 @@ begin -- start impl
                 ticks <= x"0000";
                 PULSE <= '1';
 
+			-- TODO: toby, more checks on this (maybe temp per cycle?)
             -- Within the period, when the counter reaches the "position" value, set the output low.
             -- This will make larger position values produce longer pulses.
             elsif ticks = current_position_ticks then
@@ -254,11 +271,11 @@ begin -- start impl
 	en_3 <= '1' when (sel = x"0003" or sel = x"FFFF") else '0';
 
 	MOTION_DONE <= x"0001" when (
-					(sel = x"FFFF" and (done_0 and done_1 and done_2 and done_3)) or
-					(sel = x"0000" and done_0) or
-					(sel = x"0001" and done_1) or
-					(sel = x"0002" and done_2) or
-					(sel = x"0003" and done_3) or
+					((sel = x"FFFF") and (done_0 = '1' and done_1 = '1' and done_2 = '1' and done_3 = '1')) or
+					((sel = x"0000") and done_0 = '1') or
+					((sel = x"0001") and done_1 = '1') or
+					((sel = x"0002") and done_2 = '1') or
+					((sel = x"0003") and done_3 = '1')
     ) else x"0000";
 
 	SERVO_0 : HSPG_SERVO port map(

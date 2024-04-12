@@ -21,9 +21,9 @@ https://fpgasoftware.intel.com/eula.
 */
 (header "symbol" (version "1.1"))
 (symbol
-	(rect 16 16 264 224)
+	(rect 16 16 264 256)
 	(text "IO_DECODER" (rect 5 0 71 12)(font "Arial" ))
-	(text "inst" (rect 8 192 20 204)(font "Arial" ))
+	(text "inst" (rect 8 224 20 236)(font "Arial" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -108,7 +108,14 @@ https://fpgasoftware.intel.com/eula.
 		(text "HSPG_SPD_EN" (rect 157 171 227 183)(font "Arial" ))
 		(line (pt 248 176)(pt 232 176)(line_width 1))
 	)
+	(port
+		(pt 248 192)
+		(output)
+		(text "HSPG_DONE_EN" (rect 0 0 80 12)(font "Arial" ))
+		(text "HSPG_DONE_EN" (rect 147 187 227 199)(font "Arial" ))
+		(line (pt 248 192)(pt 232 192)(line_width 1))
+	)
 	(drawing
-		(rectangle (rect 16 16 232 192)(line_width 1))
+		(rectangle (rect 16 16 232 224)(line_width 1))
 	)
 )

@@ -43,12 +43,14 @@ Repeat:
 	IN Switches
 	AND PosMask
 
-	OUT LEDs
-
 	OUT HEX0 ; ?
 	OUT HEX1 ; ?
 
 	OUT HSPG_POS
+
+	; show if servo is done
+	IN HSPG_DONE
+	OUT LEDs
 
 	JUMP Repeat
 ; =========================
@@ -67,6 +69,7 @@ HSPG_POS:           EQU &H51
 HSPG_MIN_POS:       EQU &H52
 HSPG_MAX_POS:       EQU &H53
 HSPG_ROT_TIME:      EQU &H54
+HSPG_DONE:          EQU &H55
 
 
 ;TODO: Here:
