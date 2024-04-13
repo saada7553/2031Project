@@ -23,6 +23,8 @@ Loop:
 	AND PosMask
 	OUT HSPG_POS
 
+	JUMP Loop
+
 SelMask:      DW &B1100000000
 PosMask:      DW &B0011111111
 	
