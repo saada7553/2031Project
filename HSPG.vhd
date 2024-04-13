@@ -49,6 +49,8 @@ architecture a of HSPG_SERVO is
     signal current_position_ticks    : unsigned(15 downto 0) := x"0000";
     signal spd_ticks_till_move       : unsigned(15 downto 0) := x"0000";
 	signal subticks                  : unsigned(15 downto 0) := x"0000";
+
+	signal this_cycle_ticks          : unsigned(15 downto 0) := ticks_min;
 begin -- start impl
 	-- set pos/min/max/spd via IO
     process (RESETN, CS_POS, CS_MIN_POS, CS_MAX_POS, CS_ROT_TIME) begin
@@ -144,7 +146,8 @@ begin -- start impl
 				needed_spd_ticks := rot_time - 1;
 
 				if spd_ticks_till_move = needed_spd_ticks or spd_ticks_till_move > needed_spd_ticks then
-					subticks <= subticks + 18;
+					-- subticks <= subticks + 18;
+					subticks <= subticks + 10;
 
 					if subticks >= 20 then
 						if target_position_ticks < current_position_ticks then
@@ -194,11 +197,18 @@ begin -- start impl
                 -- Reset the counter and set the output high.
                 ticks <= x"0000";
                 PULSE <= '1';
+				if current_position_ticks < ticks_min then
+					this_cycle_ticks <= ticks_min;
+				elsif current_position_ticks > ticks_max then
+					this_cycle_ticks <= ticks_max;
+				else
+					this_cycle_ticks <= current_position_ticks;
+				end if;
 
 			-- TODO: toby, more checks on this (maybe temp per cycle?)
             -- Within the period, when the counter reaches the "position" value, set the output low.
             -- This will make larger position values produce longer pulses.
-            elsif ticks = current_position_ticks then
+            elsif (ticks = this_cycle_ticks) or (ticks > ticks_max) then
                 PULSE <= '0';
             end if;
         end if;
