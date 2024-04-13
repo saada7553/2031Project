@@ -5,32 +5,80 @@ ADDRESS_RADIX=HEX;
 DATA_RADIX=HEX;
 
 CONTENT BEGIN
-0000: 9000; -- 	IN Switches
-0001: 4819; -- 	AND SelMask
-0002: 300B; -- 	JNEG Sel_1
-0003: 380B; -- 	JPOS Sel_1
-0004: B800; -- 		LOADI 0
-0005: 9852; -- 		OUT HSPG_MIN_POS
-0006: B864; -- 		LOADI 100
-0007: 9853; -- 		OUT HSPG_MAX_POS
-0008: B800; -- 		LOADI 0
-0009: 9854; -- 		OUT HSPG_ROT_TIME
-000A: 2811; -- 	JUMP After_Sel
-000B: B800; -- 		LOADI 0
-000C: 9852; -- 		OUT HSPG_MIN_POS
-000D: B80F; -- 		LOADI 15
-000E: 9853; -- 		OUT HSPG_MAX_POS
-000F: BBE8; -- 		LOADI 1000
-0010: 9854; -- 		OUT HSPG_ROT_TIME
-0011: 9000; -- 	IN Switches
-0012: 481A; -- 	AND PosMask
-0013: 9804; -- 	OUT HEX0 ; ?
-0014: 9805; -- 	OUT HEX1 ; ?
-0015: 9851; -- 	OUT HSPG_POS
-0016: 9055; -- 	IN HSPG_DONE
-0017: 9801; -- 	OUT LEDs
-0018: 2800; -- 	JUMP Repeat
-0019: 0200; -- SelMask:      DW &B1000000000
-001A: 01FF; -- PosMask:      DW &B0111111111
-[001B..07FF] : 0000; -- [empty memory]
+0000: BFFF; -- 	LOADI -1
+0001: 9850; -- 	OUT HSPG_SEL
+0002: B800; -- 	LOADI 0
+0003: 9852; -- 	OUT HSPG_MIN_POS
+0004: B801; -- 	LOADI 1
+0005: 9853; -- 	OUT HSPG_MAX_POS
+0006: BBE8; -- 	LOADI 1000
+0007: 9854; -- 	OUT HSPG_ROT_TIME
+0008: B800; -- 	LOADI 0
+0009: 9850; -- 	OUT HSPG_SEL
+000A: B9F4; -- 	LOADI 500
+000B: 9854; -- 	OUT HSPG_ROT_TIME
+000C: 2838; -- 	JUMP UpdateLoop
+000D: 0004; -- NumServos: DW 4
+000E: 0000; -- FanIndexArrPtr: DW 0
+000F: 01F4; -- 	DW 500
+0010: 0002; -- FanPosCount: DW 2
+0011: 0258; -- 	DW 600
+0012: 0000; -- ServoIndex: DW 0
+0013: 0000; -- MemTemp1: DW 0
+0014: 0812; -- 	LOAD ServoIndex
+0015: 180F; -- 	ADD FanIndexArr
+0016: 1013; -- 	STORE MemTemp1
+0017: 7013; -- 	ILOAD MemTemp1
+0018: 8800; -- 	RETURN
+0019: 0000; -- MemTemp2: DW 0
+001A: 0000; -- MemTemp3: DW 0
+001B: 1019; -- 	STORE MemTemp2
+001C: 0812; -- 	LOAD ServoIndex
+001D: 180F; -- 	ADD FanIndexArr
+001E: 101A; -- 	STORE MemTemp3
+001F: 781A; -- 	ISTORE MemTemp3
+0020: 0819; -- 	LOAD MemTemp2
+0021: 8800; -- 	RETURN
+0022: 1012; -- 	STORE ServoIndex
+0023: 9850; -- 	OUT HSPG_SEL
+0024: 8014; -- 	CALL GetFanIndex
+0025: 9851; -- 	OUT HSPG_POS
+0026: 9055; -- 	IN HSPG_DONE
+0027: 4031; -- 	JZERO NoIncFan
+0028: 8014; -- 		CALL GetFanIndex
+0029: 6801; -- 		ADDI 1 ; fan_idx++
+002A: 2010; -- 		SUB FanPosCount
+002B: 402D; -- 		JZERO WrapFan
+002C: 282F; -- 		JUMP SkipWrapFan
+002D: B800; -- 			LOADI 0
+002E: 2830; -- 			JUMP FanIndexDone
+002F: 1810; -- 			ADD FanPosCount
+0030: 801B; -- 		CALL SetFanIndex
+0031: 8800; -- 	RETURN
+0032: 0000; -- ModeArrValue: DW &H00
+0033: 0000; -- ModeArrIndex: DW &H00
+0034: 0000; -- ModeArr0: DW &H00
+0035: 0000; -- ModeArr1: DW &H00
+0036: 0000; -- ModeArr2: DW &H00
+0037: 0000; -- ModeArr3: DW &H00
+0038: B800; -- 	LOADI 0
+0039: 8022; -- 	CALL UpdateFan
+003A: B801; -- 	LOADI 1
+003B: 8022; -- 	CALL UpdateFan
+003C: B802; -- 	LOADI 2
+003D: 8022; -- 	CALL UpdateFan
+003E: B803; -- 	LOADI 3
+003F: 8022; -- 	CALL UpdateFan
+0040: 2838; -- 	JUMP UpdateLoop
+0041: 0200; -- SelMask:      DW &B1000000000
+0042: 01FF; -- PosMask:      DW &B0111111111
+[0043..01F3] : 0000; -- [empty memory]
+01F4: 0000; -- DW 0
+01F5: 0000; -- DW 0
+01F6: 0000; -- DW 0
+01F7: 0000; -- DW 0
+[01F8..0257] : 0000; -- [empty memory]
+0258: 0000; -- DW 0
+0259: 0001; -- DW 1
+[025A..07FF] : 0000; -- [empty memory]
 END;

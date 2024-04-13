@@ -13,17 +13,20 @@ Init:
 
 	LOADI 0
 	OUT HSPG_SEL
+	
+	LOADI 500
+	OUT HSPG_ROT_TIME
 
-	JUMP UpdateLoop:
+	JUMP UpdateLoop
 
 NumServos: DW 4
 FanIndexArrPtr: DW 0
 
-FanIndexArr: // []
+FanIndexArr: ; []
 	DW 500
 
 FanPosCount: DW 2
-FanPosArr: // [] -- TODO (use later)
+FanPosArr: ; [] -- TODO (use later)
 	DW 600
 
 ; input = servo-index
@@ -34,12 +37,24 @@ GetFanIndex: ; ServoIndex = servo-i: return --> FanIndexArr[servo-i]
 	LOAD ServoIndex
 	ADD FanIndexArr
 	STORE MemTemp1
-	LOADI MemTemp1
+	ILOAD MemTemp1
 	
 	RETURN
+
+MemTemp2: DW 0
+MemTemp3: DW 0
 SetFanIndex: ; input = new-fan-i, ServoIndex = servo-index
+	STORE MemTemp2
+	
+	LOAD ServoIndex
+	ADD FanIndexArr
+	STORE MemTemp3
+	ISTORE MemTemp3
+
+	LOAD MemTemp2
 	
 	RETURN
+
 UpdateFan:
 	STORE ServoIndex
 	OUT HSPG_SEL
@@ -47,7 +62,7 @@ UpdateFan:
 	CALL GetFanIndex
 	OUT HSPG_POS
 
-	IN HSPG_MODE
+	IN HSPG_DONE
 	JZERO NoIncFan
 		CALL GetFanIndex
 		ADDI 1 ; fan_idx++
@@ -61,9 +76,8 @@ UpdateFan:
 		SkipWrapFan:
 			ADD FanPosCount
 		FanIndexDone:
+		CALL SetFanIndex
 	NoIncFan:
-
-	CALL SetFanIndex
 	
 	RETURN
 
@@ -153,12 +167,12 @@ HSPG_MAX_POS:       EQU &H53
 HSPG_ROT_TIME:      EQU &H54
 HSPG_DONE:          EQU &H55
 
-ORG 500 // FanIndexArr
+ORG 500 ; FanIndexArr
 DW 0
 DW 0
 DW 0
 DW 0
 
-ORG 600 // FanPosArr
+ORG 600 ; FanPosArr
 DW 0
 DW 1

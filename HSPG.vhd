@@ -147,7 +147,8 @@ begin -- start impl
 
 				if spd_ticks_till_move = needed_spd_ticks or spd_ticks_till_move > needed_spd_ticks then
 					-- subticks <= subticks + 18;
-					subticks <= subticks + 10;
+					subticks <= subticks + 24;
+					-- subticks <= subticks + 10;
 
 					if subticks >= 20 then
 						if target_position_ticks < current_position_ticks then
