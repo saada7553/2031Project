@@ -18,8 +18,8 @@ entity HSPG_SERVO is
         CS_MAX_POS  : in  std_logic;
         CS_ROT_TIME : in  std_logic;
 		  
-        IO_WRITE    : in  std_logic;
         IO_DATA     : in  std_logic_vector(15 downto 0);
+        IO_WRITE    : in  std_logic;
         CLOCK       : in  std_logic;
         RESETN      : in  std_logic;
 
@@ -49,9 +49,7 @@ architecture a of HSPG_SERVO is
     signal current_position_ticks    : unsigned(15 downto 0) := x"0000";
     signal spd_ticks_till_move       : unsigned(15 downto 0) := x"0000";
 	signal subticks                  : unsigned(15 downto 0) := x"0000";
-
 begin -- start impl
-
 	-- set pos/min/max/spd via IO
     process (RESETN, CS_POS, CS_MIN_POS, CS_MAX_POS, CS_ROT_TIME) begin
         if RESETN = '0' then
@@ -222,18 +220,18 @@ entity HSPG is
         CS_MIN_POS  : in  std_logic;
         CS_MAX_POS  : in  std_logic;
         CS_ROT_TIME : in  std_logic;
+		CS_DONE     : in  std_logic;
 		  
         IO_WRITE    : in  std_logic;
-        IO_DATA     : in  std_logic_vector(15 downto 0);
         CLOCK       : in  std_logic;
         RESETN      : in  std_logic;
+
+        IO_DATA     : inout  std_logic_vector(15 downto 0);
 
         PULSE_0     : out std_logic;
         PULSE_1     : out std_logic;
         PULSE_2     : out std_logic;
-        PULSE_3     : out std_logic;
-
-		MOTION_DONE : out std_logic_vector(15 downto 0)
+        PULSE_3     : out std_logic
     );
 end HSPG;
 
@@ -263,7 +261,11 @@ architecture a of HSPG is
 	signal en_0, en_1, en_2, en_3 : std_logic := '0';
 	signal done_0, done_1, done_2, done_3 : std_logic := '0';
 
+	signal MOTION_DONE : std_logic_vector(15 downto 0);
+	SIGNAL IO_MOVE_DONE  : STD_LOGIC_VECTOR(15 DOWNTO 0); -- a stable copy of the done for the IO
+	SIGNAL IO_OUT    : STD_LOGIC;
 begin -- start impl
+	IO_OUT <= (CS_DONE AND NOT(IO_WRITE));
 
 	en_0 <= '1' when (sel = x"0000" or sel = x"FFFF") else '0';
 	en_1 <= '1' when (sel = x"0001" or sel = x"FFFF") else '0';
@@ -277,6 +279,17 @@ begin -- start impl
 					((sel = x"0002") and done_2 = '1') or
 					((sel = x"0003") and done_3 = '1')
     ) else x"0000";
+
+	-- Use LPM function to create bidirection I/O data bus
+	IO_BUS: lpm_bustri
+	GENERIC MAP (
+		lpm_width => 16
+	)
+	PORT MAP (
+		data     => IO_MOVE_DONE,
+		enabledt => IO_OUT,
+		tridata  => IO_DATA
+	);
 
 	SERVO_0 : HSPG_SERVO port map(
 		CS_POS and en_0,
@@ -324,6 +337,15 @@ begin -- start impl
             sel <= x"0000";
         elsif IO_WRITE = '1' and rising_edge(CS_SEL) then
             sel <= IO_DATA;
+        end if;
+    end process;
+
+	-- set sel via IO
+    process (RESETN, CS_DONE) begin
+        if RESETN = '0' then
+			IO_MOVE_DONE <= x"0001";
+        elsif rising_edge(CS_DONE) then
+			IO_MOVE_DONE <= MOTION_DONE;
         end if;
     end process;
 
