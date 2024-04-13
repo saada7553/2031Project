@@ -25,8 +25,8 @@ Loop:
 
 	JUMP Loop
 
-SelMask:      DW &B1100000000
-PosMask:      DW &B0011111111
+SelMask:      DW &B1000000000
+PosMask:      DW &B0111111111
 	
 ; IO address constants
 Switches:  EQU 000
