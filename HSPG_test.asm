@@ -6,7 +6,7 @@ Init:
 	LOADI 0
 	OUT HSPG_MIN_POS
 
-	LOADI 100
+	LOADI 127
 	OUT HSPG_MAX_POS
 
 	; each
@@ -67,6 +67,10 @@ MinRangeArr: ; []
 	DW 580
 MaxRangeArr: ; []
 	DW 590
+ManualMinRangeArr: ; []
+	DW 610
+ManualMaxRangeArr: ; []
+	DW 620
 
 FanWaitTicksMax: DW 100
 
@@ -130,6 +134,24 @@ GetMaxRange: ; ServoIndex = servo-i: return --> FanIndexArr[servo-i]
 	CALL GetRangeIndex
 
 	ADD MaxRangeArr
+	STORE TempFanPtr
+	ILOAD TempFanPtr
+	
+	RETURN
+
+GetManualMinRange: ; ServoIndex = servo-i: return --> FanIndexArr[servo-i]
+	CALL GetRangeIndex
+
+	ADD ManualMinRangeArr
+	STORE TempFanPtr
+	ILOAD TempFanPtr
+	
+	RETURN
+
+GetManualMaxRange: ; ServoIndex = servo-i: return --> FanIndexArr[servo-i]
+	CALL GetRangeIndex
+
+	ADD ManualMaxRangeArr
 	STORE TempFanPtr
 	ILOAD TempFanPtr
 	
@@ -216,11 +238,11 @@ UpdateManual:
 	LOAD ServoIndex
 	OUT HSPG_SEL
 
-	LOADI 0
-	OUT HSPG_MIN_POS
-
-	LOADI 127
-	OUT HSPG_MAX_POS
+	; LOADI 0
+	; OUT HSPG_MIN_POS
+	;
+	; LOADI 127
+	; OUT HSPG_MAX_POS
 
 	CALL IsCurrentSelected
 	JZERO ManualNotSelected
@@ -312,6 +334,12 @@ DoConfigManual: ; i in ServoIndex
 
 	CALL GetManualSpeed
 	OUT HSPG_ROT_TIME
+
+	CALL GetManualMinRange
+	OUT HSPG_MIN_POS
+
+	CALL GetManualMaxRange
+	OUT HSPG_MAX_POS
 
 	RETURN
 
@@ -507,6 +535,17 @@ ORG 600 ; FanPosArr
 	DW 0
 	DW 100
 
+ORG 610 ; ManualMinRangeArr
+	DW 0
+	DW 0
+	DW 0
+	DW 0
+
+ORG 620 ; ManualMaxRangeArr
+	DW 127
+	DW 1
+	DW 3
+	DW 256
 
 
 	; DW 0

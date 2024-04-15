@@ -146,18 +146,51 @@ begin -- start impl
 
 				if spd_ticks_till_move = needed_spd_ticks or spd_ticks_till_move > needed_spd_ticks then
 					-- subticks <= subticks + 18;
-					subticks <= subticks + 36;
+					subticks <= subticks + 36; -- 1.4ish
+					-- subticks <= subticks + 45; -- 1.4ish (wrong)
+					-- subticks <= subticks + 54; -- 0.66ish (on 500ms)
 					-- subticks <= subticks + 10;
 
-					if subticks >= 20 then
+
+					if subticks >= 40 then
 						if target_position_ticks < current_position_ticks then
-							if (current_position_ticks - 1) = target_position_ticks then
+							if (current_position_ticks - 4) < target_position_ticks then
+								current_position_ticks <= target_position_ticks;
+							else
+								current_position_ticks <= current_position_ticks - 4;
+							end if;
+						else
+							if (current_position_ticks + 4) > target_position_ticks then
+								current_position_ticks <= target_position_ticks;
+							else
+								current_position_ticks <= current_position_ticks + 4;
+							end if;
+						end if;
+						subticks <= subticks - 40;
+					elsif subticks >= 30 then
+						if target_position_ticks < current_position_ticks then
+							if (current_position_ticks - 3) < target_position_ticks then
+								current_position_ticks <= target_position_ticks;
+							else
+								current_position_ticks <= current_position_ticks - 3;
+							end if;
+						else
+							if (current_position_ticks + 3) > target_position_ticks then
+								current_position_ticks <= target_position_ticks;
+							else
+								current_position_ticks <= current_position_ticks + 3;
+							end if;
+						end if;
+						subticks <= subticks - 30;
+					elsif subticks >= 20 then
+						if target_position_ticks < current_position_ticks then
+							if (current_position_ticks - 2) < target_position_ticks then
 								current_position_ticks <= target_position_ticks;
 							else
 								current_position_ticks <= current_position_ticks - 2;
 							end if;
 						else
-							if (current_position_ticks + 1) = target_position_ticks then
+							if (current_position_ticks + 2) > target_position_ticks then
 								current_position_ticks <= target_position_ticks;
 							else
 								current_position_ticks <= current_position_ticks + 2;
