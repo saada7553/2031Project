@@ -90,7 +90,7 @@ begin -- start impl
 		variable needed_spd_ticks : unsigned(15 downto 0);
     begin
         if (RESETN = '0') then
-            ticks <= x"0000";
+            ticks <= x"0001";
 			current_position_ticks <= ticks_min;
 			spd_ticks_till_move <= x"0000";
             subticks <= x"0000";
@@ -121,7 +121,6 @@ begin -- start impl
 				user_possibilities_div := user_possibilities_m1;
 			end if;
 
-			-- TODO: configurable ticks_min/ticks_max?
 			position_ticks_raw := ((user_position * (ticks_max - ticks_min)) / (user_possibilities_div)) + ticks_min;
 
 			-- bound check just in case! (hopefully this isn't even possible/necessary)
@@ -196,7 +195,7 @@ begin -- start impl
             -- When the counter reaches the full desired period, start the period over.
             if ticks = ticks_period then  -- 20 ms has elapsed
                 -- Reset the counter and set the output high.
-                ticks <= x"0000";
+                ticks <= x"0001";
                 PULSE <= '1';
 				if current_position_ticks < ticks_min then
 					this_cycle_ticks <= ticks_min;
@@ -206,10 +205,7 @@ begin -- start impl
 					this_cycle_ticks <= current_position_ticks;
 				end if;
 
-			-- TODO: toby, more checks on this (maybe temp per cycle?)
-            -- Within the period, when the counter reaches the "position" value, set the output low.
-            -- This will make larger position values produce longer pulses.
-            elsif (ticks = this_cycle_ticks) or (ticks > ticks_max) then
+            elsif (ticks = this_cycle_ticks) or (ticks >= ticks_max) then
                 PULSE <= '0';
             end if;
         end if;

@@ -11,106 +11,278 @@ CONTENT BEGIN
 0003: 9852; -- 	OUT HSPG_MIN_POS
 0004: B864; -- 	LOADI 100
 0005: 9853; -- 	OUT HSPG_MAX_POS
-0006: BBE8; -- 	LOADI 1000
-0007: 9854; -- 	OUT HSPG_ROT_TIME
-0008: B800; -- 	LOADI 0
-0009: 9850; -- 	OUT HSPG_SEL
-000A: 080D; -- 	LOAD JAVA_BIG_INTEGER
-000B: 9854; -- 	OUT HSPG_ROT_TIME
-000C: 283E; -- 	JUMP UpdateLoop
-000D: 2710; -- JAVA_BIG_INTEGER: DW 10000
-000E: 0004; -- NumServos: DW 4
-000F: 01F4; -- 	DW 500
-0010: 001C; -- FanPosCount: DW 28
-0011: 0258; -- 	DW 600
-0012: 0000; -- ServoIndex: DW 0
-0013: 0000; -- TempFanPtr: DW 0
-0014: 8019; -- 	CALL GetFanIndex
-0015: 1811; -- 	ADD FanPosArr
-0016: 1013; -- 	STORE TempFanPtr
-0017: 7013; -- 	ILOAD TempFanPtr
-0018: 8800; -- 	RETURN
-0019: 0812; -- 	LOAD ServoIndex
-001A: 180F; -- 	ADD FanIndexArr
-001B: 1013; -- 	STORE TempFanPtr
-001C: 7013; -- 	ILOAD TempFanPtr
-001D: 8800; -- 	RETURN
-001E: 0000; -- TempFanSetInput: DW 0
-001F: 101E; -- 	STORE TempFanSetInput
-0020: 0812; -- 	LOAD ServoIndex
-0021: 180F; -- 	ADD FanIndexArr
-0022: 1013; -- 	STORE TempFanPtr ; addr
-0023: 081E; -- 	LOAD TempFanSetInput ; ac = val
-0024: 7813; -- 	ISTORE TempFanPtr ; addr
-0025: 8800; -- 	RETURN
-0026: 1012; -- 	STORE ServoIndex
-0027: 9850; -- 	OUT HSPG_SEL
-0028: 8014; -- 	CALL GetFanPos
-0029: 9851; -- 	OUT HSPG_POS
-002A: 0812; -- 	LOAD ServoIndex
-002B: 9055; -- 	IN HSPG_DONE
-002C: 9801; -- 	OUT LEDs
-002D: 4037; -- 	JZERO NoIncFan
-002E: 8019; -- 		CALL GetFanIndex
-002F: 6801; -- 		ADDI 1 ; fan_idx++
-0030: 2010; -- 		SUB FanPosCount
-0031: 4033; -- 		JZERO WrapFan
-0032: 2835; -- 		JUMP SkipWrapFan
-0033: B800; -- 			LOADI 0
-0034: 2836; -- 			JUMP FanIndexDone
-0035: 1810; -- 			ADD FanPosCount
-0036: 801F; -- 		CALL SetFanIndex
-0037: 8800; -- 	RETURN
-0038: 0000; -- ModeArrValue: DW &H00
-0039: 0000; -- ModeArrIndex: DW &H00
-003A: 0000; -- ModeArr0: DW &H00
-003B: 0000; -- ModeArr1: DW &H00
-003C: 0000; -- ModeArr2: DW &H00
-003D: 0000; -- ModeArr3: DW &H00
-003E: B800; -- 	LOADI 0
-003F: 8026; -- 	CALL UpdateFan
-0040: B801; -- 	LOADI 1
-0041: 8026; -- 	CALL UpdateFan
-0042: B802; -- 	LOADI 2
-0043: 8026; -- 	CALL UpdateFan
-0044: B803; -- 	LOADI 3
-0045: 8026; -- 	CALL UpdateFan
-0046: 283E; -- 	JUMP UpdateLoop
-0047: 0200; -- SelMask:      DW &B1000000000
-0048: 01FF; -- PosMask:      DW &B0111111111
-[0049..01F3] : 0000; -- [empty memory]
+0006: B800; -- 	LOADI 0
+0007: 9850; -- 	OUT HSPG_SEL
+0008: 08B8; -- 	LOAD Manual_Spd_0
+0009: 9854; -- 	OUT HSPG_ROT_TIME
+000A: B801; -- 	LOADI 1
+000B: 9850; -- 	OUT HSPG_SEL
+000C: 08B9; -- 	LOAD Manual_Spd_1
+000D: 9854; -- 	OUT HSPG_ROT_TIME
+000E: B802; -- 	LOADI 2
+000F: 9850; -- 	OUT HSPG_SEL
+0010: 08BA; -- 	LOAD Manual_Spd_2
+0011: 9854; -- 	OUT HSPG_ROT_TIME
+0012: B803; -- 	LOADI 3
+0013: 9850; -- 	OUT HSPG_SEL
+0014: 08BB; -- 	LOAD Manual_Spd_3
+0015: 9854; -- 	OUT HSPG_ROT_TIME
+0016: B800; -- 	LOADI 0
+0017: 9850; -- 	OUT HSPG_SEL
+0018: 28DE; -- 	JUMP UpdateLoop
+0019: 0004; -- NumServos: DW 4
+001A: 01F4; -- 	DW 500
+001B: 0208; -- 	DW 520
+001C: 021C; -- 	DW 540
+001D: 0230; -- 	DW 560
+001E: 023A; -- 	DW 570
+001F: 0244; -- 	DW 580
+0020: 024E; -- 	DW 590
+0021: 0064; -- FanWaitTicksMax: DW 100
+0022: 0258; -- 	DW 600
+0023: 02BC; -- 	DW 700
+0024: 0000; -- ServoIndex: DW 0
+0025: 0000; -- TempFanPtr: DW 0
+0026: 0000; -- TempFanSetInput: DW 0
+0027: 8045; -- 	CALL GetFanIndex
+0028: 1822; -- 	ADD FanPosArr
+0029: 1025; -- 	STORE TempFanPtr
+002A: 7025; -- 	ILOAD TempFanPtr
+002B: 8800; -- 	RETURN
+002C: 8045; -- 	CALL GetFanIndex
+002D: 1823; -- 	ADD FanSpeedArr
+002E: 1025; -- 	STORE TempFanPtr
+002F: 7025; -- 	ILOAD TempFanPtr
+0030: 8800; -- 	RETURN
+0031: 80BF; -- 	CALL GetSpeedIndex
+0032: 181D; -- 	ADD ManualSpeedArr
+0033: 1025; -- 	STORE TempFanPtr
+0034: 7025; -- 	ILOAD TempFanPtr
+0035: 8800; -- 	RETURN
+0036: 80BF; -- 	CALL GetSpeedIndex
+0037: 181E; -- 	ADD NonManualSpeedArr
+0038: 1025; -- 	STORE TempFanPtr
+0039: 7025; -- 	ILOAD TempFanPtr
+003A: 8800; -- 	RETURN
+003B: 80C3; -- 	CALL GetRangeIndex
+003C: 181F; -- 	ADD MinRangeArr
+003D: 1025; -- 	STORE TempFanPtr
+003E: 7025; -- 	ILOAD TempFanPtr
+003F: 8800; -- 	RETURN
+0040: 80C3; -- 	CALL GetRangeIndex
+0041: 1820; -- 	ADD MaxRangeArr
+0042: 1025; -- 	STORE TempFanPtr
+0043: 7025; -- 	ILOAD TempFanPtr
+0044: 8800; -- 	RETURN
+0045: 0824; -- 	LOAD ServoIndex
+0046: 181A; -- 	ADD FanIndexArr
+0047: 1025; -- 	STORE TempFanPtr
+0048: 7025; -- 	ILOAD TempFanPtr
+0049: 8800; -- 	RETURN
+004A: 1026; -- 	STORE TempFanSetInput
+004B: 0824; -- 	LOAD ServoIndex
+004C: 181A; -- 	ADD FanIndexArr
+004D: 1025; -- 	STORE TempFanPtr ; addr
+004E: 0826; -- 	LOAD TempFanSetInput ; ac = val
+004F: 7825; -- 	ISTORE TempFanPtr ; addr
+0050: 8800; -- 	RETURN
+0051: 0824; -- 	LOAD ServoIndex
+0052: 181B; -- 	ADD FanWaitTickArr
+0053: 1025; -- 	STORE TempFanPtr
+0054: 7025; -- 	ILOAD TempFanPtr
+0055: 8800; -- 	RETURN
+0056: 1026; -- 	STORE TempFanSetInput
+0057: 0824; -- 	LOAD ServoIndex
+0058: 181B; -- 	ADD FanWaitTickArr
+0059: 1025; -- 	STORE TempFanPtr ; addr
+005A: 0826; -- 	LOAD TempFanSetInput ; ac = val
+005B: 7825; -- 	ISTORE TempFanPtr ; addr
+005C: 8800; -- 	RETURN
+005D: 0824; -- 	LOAD ServoIndex
+005E: 181C; -- 	ADD ModeArr
+005F: 1025; -- 	STORE TempFanPtr
+0060: 7025; -- 	ILOAD TempFanPtr
+0061: 8800; -- 	RETURN
+0062: 1026; -- 	STORE TempFanSetInput
+0063: 0824; -- 	LOAD ServoIndex
+0064: 181C; -- 	ADD ModeArr
+0065: 1025; -- 	STORE TempFanPtr ; addr
+0066: 0826; -- 	LOAD TempFanSetInput ; ac = val
+0067: 7825; -- 	ISTORE TempFanPtr ; addr
+0068: 8800; -- 	RETURN
+0069: 1024; -- 	STORE ServoIndex
+006A: 9850; -- 	OUT HSPG_SEL
+006B: 805D; -- 	CALL GetMode
+006C: 406E; -- 	JZERO Update_TL_Manual ; mode == 0 --> manual
+006D: 2870; -- 	JUMP Update_TL_Fan     ; mode != 0 --> fan
+006E: 8073; -- 		CALL UpdateManual
+006F: 2872; -- 		JUMP Update_TL_Done
+0070: 8080; -- 		CALL UpdateFan
+0071: 2872; -- 		JUMP Update_TL_Done
+0072: 8800; -- 	RETURN
+0073: 0824; -- 	LOAD ServoIndex
+0074: 9850; -- 	OUT HSPG_SEL
+0075: B800; -- 	LOADI 0
+0076: 9852; -- 	OUT HSPG_MIN_POS
+0077: B87F; -- 	LOADI 127
+0078: 9853; -- 	OUT HSPG_MAX_POS
+0079: 80CB; -- 	CALL IsCurrentSelected
+007A: 407F; -- 	JZERO ManualNotSelected
+007B: 08DD; -- 		LOAD SwitchVal
+007C: 48B4; -- 		AND Mask_Pos
+007D: 9851; -- 		OUT HSPG_POS
+007E: 9801; -- 		OUT LEDs
+007F: 8800; -- 	RETURN
+0080: 0824; -- 	LOAD ServoIndex
+0081: 9850; -- 	OUT HSPG_SEL
+0082: 8027; -- 	CALL GetFanPos
+0083: 9851; -- 	OUT HSPG_POS
+0084: 9801; -- 	OUT LEDs
+0085: 0824; -- 	LOAD ServoIndex 
+0086: 9850; -- 	OUT HSPG_SEL
+0087: 9055; -- 	IN HSPG_DONE
+0088: 4092; -- 	JZERO NoIncFan
+0089: 8045; -- 			CALL GetFanIndex
+008A: 6801; -- 			ADDI 1 ; fan_idx++
+008B: 2252; -- 			SUB FanPosCount
+008C: 408E; -- 			JZERO WrapFan
+008D: 2890; -- 			JUMP SkipWrapFan
+008E: B800; -- 				LOADI 0
+008F: 2891; -- 				JUMP FanIndexDone
+0090: 1A52; -- 				ADD FanPosCount
+0091: 804A; -- 			CALL SetFanIndex
+0092: 8800; -- 	RETURN
+0093: 08DD; -- 	LOAD SwitchVal
+0094: 48B5; -- 	AND Mask_FanMode
+0095: 8800; -- 	RETURN
+0096: 0824; -- 	LOAD ServoIndex
+0097: 9850; -- 	OUT HSPG_SEL
+0098: 8036; -- 	CALL GetNonManualSpeed
+0099: 9854; -- 	OUT HSPG_ROT_TIME
+009A: 803B; -- 	CALL GetMinRange
+009B: 9852; -- 	OUT HSPG_MIN_POS
+009C: 8040; -- 	CALL GetMaxRange
+009D: 9853; -- 	OUT HSPG_MAX_POS
+009E: 8800; -- 	RETURN
+009F: 0824; -- 	LOAD ServoIndex
+00A0: 9850; -- 	OUT HSPG_SEL
+00A1: 8031; -- 	CALL GetManualSpeed
+00A2: 9854; -- 	OUT HSPG_ROT_TIME
+00A3: 8800; -- 	RETURN
+00A4: 80D2; -- 	CALL IsCommit
+00A5: 40B0; -- 	JZERO NoConfigCommit
+00A6: 80C7; -- 		CALL GetSel
+00A7: 1024; -- 		STORE ServoIndex
+00A8: 8093; -- 		CALL GetModeBit
+00A9: 8062; -- 		CALL SetMode
+00AA: 8093; -- 		CALL GetModeBit
+00AB: 40AE; -- 		JZERO ConfigManualMode
+00AC: 8096; -- 			CALL DoConfigFan
+00AD: 28B0; -- 			JUMP NoConfigCommit
+00AE: 809F; -- 			CALL DoConfigManual
+00AF: 28B0; -- 			JUMP NoConfigCommit
+00B0: 8800; -- 	RETURN
+00B1: 0200; -- Mask_Config: DW &B1000000000
+00B2: 0040; -- Mask_ConfigCommit: DW &B0001000000
+00B3: 0180; -- Mask_Sel: DW &B0110000000
+00B4: 007F; -- Mask_Pos: DW &B0001111111
+00B5: 0001; -- Mask_FanMode: DW &B0000000001
+00B6: 0006; -- Mask_Speed: DW &B0000000110
+00B7: 0018; -- Mask_Range: DW &B0000011000
+00B8: 0000; -- Manual_Spd_0: DW 0
+00B9: 01F4; -- Manual_Spd_1: DW 500
+00BA: 03E8; -- Manual_Spd_2: DW 1000
+00BB: 07D0; -- Manual_Spd_3: DW 2000
+00BC: 08DD; -- 	LOAD SwitchVal
+00BD: 48B1; -- 	AND Mask_Config
+00BE: 8800; -- 	RETURN
+00BF: 08DD; -- 	LOAD SwitchVal
+00C0: 48B6; -- 	AND Mask_Speed
+00C1: 6011; -- 	SHIFT -1
+00C2: 8800; -- 	RETURN
+00C3: 08DD; -- 	LOAD SwitchVal
+00C4: 48B7; -- 	AND Mask_Range
+00C5: 6013; -- 	SHIFT -3
+00C6: 8800; -- 	RETURN
+00C7: 08DD; -- 	LOAD SwitchVal
+00C8: 48B3; -- 	AND Mask_Sel
+00C9: 6017; -- 	SHIFT -7
+00CA: 8800; -- 	RETURN
+00CB: 80C7; -- 	CALL GetSel
+00CC: 2024; -- 	SUB ServoIndex
+00CD: 40D0; -- 	JZERO ItIsSelected
+00CE: B800; -- 		LOADI 0
+00CF: 8800; -- 		RETURN
+00D0: B801; -- 		LOADI 1
+00D1: 8800; -- 		RETURN
+00D2: 08DD; -- 	LOAD SwitchVal
+00D3: 48B2; -- 	AND Mask_ConfigCommit
+00D4: 40D7; -- 	JZERO DoNotCommit
+00D5: B801; -- 		LOADI 1
+00D6: 8800; -- 		RETURN
+00D7: B800; -- 		LOADI 0
+00D8: 8800; -- 		RETURN
+00D9: 08DD; -- 	LOAD SwitchVal
+00DA: 48B3; -- 	AND Mask_Sel
+00DB: 6017; -- 	SHIFT -7
+00DC: 8800; -- 	RETURN
+00DD: 0000; -- SwitchVal: DW 0
+00DE: 9000; -- 	IN SWITCHES
+00DF: 10DD; -- 	STORE SwitchVal
+00E0: 80BC; -- 	CALL IsConfigMode
+00E1: 30E4; -- 	JNEG Update_LP_Config
+00E2: 38E4; -- 	JPOS Update_LP_Config
+00E3: 28E6; -- 	JUMP Update_LP_Update
+00E4: 80A4; -- 		CALL UpdateConfigMode
+00E5: 28EF; -- 		JUMP Update_LP_Done
+00E6: B800; -- 		LOADI 0
+00E7: 8069; -- 		CALL UpdateServo
+00E8: B801; -- 		LOADI 1
+00E9: 8069; -- 		CALL UpdateServo
+00EA: B802; -- 		LOADI 2
+00EB: 8069; -- 		CALL UpdateServo
+00EC: B803; -- 		LOADI 3
+00ED: 8069; -- 		CALL UpdateServo
+00EE: 28EF; -- 		JUMP Update_LP_Done
+00EF: 28DE; -- 	JUMP UpdateLoop
+[00F0..01F3] : 0000; -- [empty memory]
 01F4: 0000; -- 	DW 0
 01F5: 0000; -- 	DW 0
 01F6: 0000; -- 	DW 0
 01F7: 0000; -- 	DW 0
-[01F8..0257] : 0000; -- [empty memory]
+[01F8..0207] : 0000; -- [empty memory]
+0208: 0000; -- 	DW 0
+0209: 0000; -- 	DW 0
+020A: 0000; -- 	DW 0
+020B: 0000; -- 	DW 0
+[020C..021B] : 0000; -- [empty memory]
+021C: 0000; -- 	DW 0
+021D: 0000; -- 	DW 0
+021E: 0000; -- 	DW 0
+021F: 0000; -- 	DW 0
+[0220..022F] : 0000; -- [empty memory]
+0230: 0000; -- 	DW 0
+0231: 01F4; -- 	DW 500
+0232: 03E8; -- 	DW 1000
+0233: 07D0; -- 	DW 2000
+[0234..0239] : 0000; -- [empty memory]
+023A: 01F4; -- 	DW 500
+023B: 03E8; -- 	DW 1000
+023C: 05DC; -- 	DW 1500
+023D: 07D0; -- 	DW 2000
+[023E..0243] : 0000; -- [empty memory]
+0244: 0000; -- 	DW 0
+0245: 0000; -- 	DW 0
+0246: FF9C; -- 	DW -100
+0247: FFCE; -- 	DW -50
+[0248..024D] : 0000; -- [empty memory]
+024E: 0064; -- 	DW 100
+024F: 00C8; -- 	DW 200
+0250: 0064; -- 	DW 100
+0251: 0096; -- 	DW 150
+0252: 0002; -- FanPosCount: DW 2
+[0253..0257] : 0000; -- [empty memory]
 0258: 0000; -- 	DW 0
-0259: 0014; -- 	DW 20
-025A: 000A; -- 	DW 10
-025B: 001E; -- 	DW 30
-025C: 0014; -- 	DW 20
-025D: 0028; -- 	DW 40
-025E: 001E; -- 	DW 30
-025F: 0032; -- 	DW 50
-0260: 003C; -- 	DW 60
-0261: 0032; -- 	DW 50
-0262: 0046; -- 	DW 70
-0263: 003C; -- 	DW 60
-0264: 0050; -- 	DW 80
-0265: 005A; -- 	DW 90
-0266: 0064; -- 	DW 100
-0267: 005A; -- 	DW 90
-0268: 0050; -- 	DW 80
-0269: 003C; -- 	DW 60
-026A: 0046; -- 	DW 70
-026B: 0032; -- 	DW 50
-026C: 003C; -- 	DW 60
-026D: 0032; -- 	DW 50
-026E: 001E; -- 	DW 30
-026F: 0028; -- 	DW 40
-0270: 0014; -- 	DW 20
-0271: 001E; -- 	DW 30
-0272: 000A; -- 	DW 10
-0273: 0014; -- 	DW 20
-[0274..07FF] : 0000; -- [empty memory]
+0259: 0064; -- 	DW 100
+[025A..07FF] : 0000; -- [empty memory]
 END;
